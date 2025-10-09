@@ -38,6 +38,7 @@ import java.util.List;
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
+
     @IgnoreConfigurable
     static PoseHistory poseHistory;
 
