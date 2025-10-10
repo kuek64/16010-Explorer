@@ -16,19 +16,15 @@ public class ShooterSubsystem {
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
-    private Limelight3A limelight = null;
     private static final int TURRET_MIN = -325;
     private static final int TURRET_MAX = 325;
     private static final double TICKS_PER_DEGREE = 2.11604166667*(1150/435); // tune this
     public static double strength = 1.2;
     public static int pos = 0;
-    public double lastTx = 0;
     public static double p = 650;
     public static double i = 0;
     public static double d = 10;
     public static double f = 0;
-    public static int targetID = 0;
-    private static int id;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -60,6 +56,36 @@ public class ShooterSubsystem {
 
     public void update() {
 
+    }
+
+    public void alignTurret(double x, double y, double heading, boolean blue) {
+        final double blueGoalX = 17.0;
+        final double blueGoalY = 133.0;
+        final double redGoalX  = 127.0;
+        final double redGoalY  = 133.0;
+
+        double goalX = blue ? blueGoalX : redGoalX;
+        double goalY = blue ? blueGoalY : redGoalY;
+
+        double dx = goalX - x;
+        double dy = goalY - y;
+
+        double angleToGoal = Math.toDegrees(Math.atan2(dx, dy));
+
+        double tx = angleToGoal - heading;
+
+        tx = (tx + 540) % 360 - 180;
+
+        int adjustment = (int) (tx * TICKS_PER_DEGREE);
+
+        pos += (int) (strength * adjustment / 10.0);
+
+        if(pos > TURRET_MAX || pos < TURRET_MIN) {
+            setTurretPosition(0);
+        } else {
+            pos = Math.max(TURRET_MIN, Math.min(TURRET_MAX, pos));
+            setFlywheelVelocity(pos);
+        }
     }
 
     public void telemetry() {

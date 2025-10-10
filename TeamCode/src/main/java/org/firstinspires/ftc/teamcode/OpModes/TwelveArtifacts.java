@@ -20,18 +20,24 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous (name = "Blue 9+3", group = "Autonomous")
 public class TwelveArtifacts extends OpMode {
     public static Follower follower;
+    public static Pose autoEndPose;
+
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
+
     private Timer pathTimer, opmodeTimer;
+
     private int pathState;
-    private final Pose startPose = new Pose(28, 127, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(23, 84, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2Pose = new Pose(18, 54, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickup3Pose = new Pose(18, 34, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickup1PoseC = new Pose(80, 74, Math.toRadians(180)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2PoseC = new Pose(80, 54, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickup3PoseC = new Pose(80, 34, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+
+    private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
+    private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135));
+    private final Pose pickup1Pose = new Pose(23, 84, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(18, 54, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(18, 34, Math.toRadians(180));
+    private final Pose pickup1PoseC = new Pose(80, 74, Math.toRadians(180));
+    private final Pose pickup2PoseC = new Pose(80, 54, Math.toRadians(180));
+    private final Pose pickup3PoseC = new Pose(80, 34, Math.toRadians(180));
+
     private Path scorePreload;
     private PathChain scorePickup1, scorePickup2, scorePickup3, grabPickup1, grabPickup2, grabPickup3;
 
@@ -75,13 +81,13 @@ public class TwelveArtifacts extends OpMode {
             case 0:
                 shooter.setFlywheelVelocity(1350);
                 shooter.setTurretPosition(0);
-                intake.partialIntake();
+                intake.intake();
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
-                    intake.kick();
+                    intake.kickSequence();
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
                     intake.intake();
@@ -91,14 +97,13 @@ public class TwelveArtifacts extends OpMode {
                 break;
             case 2:
                 if(pathTimer.getElapsedTimeSeconds() > 2) {
-                    intake.partialIntake();
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
                 break;
             case 3:
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
-                    intake.kick();
+                    intake.kickSequence();
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
                     intake.intake();
@@ -108,30 +113,29 @@ public class TwelveArtifacts extends OpMode {
                 break;
             case 4:
                 if(!follower.isBusy()) {
-                    intake.partialIntake();
                     follower.followPath(scorePickup2,true);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
-                    intake.kick();
+                    intake.kickSequence();
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
+                    intake.intake();
                     follower.followPath(grabPickup3,true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if(!follower.isBusy()) {
-                    intake.partialIntake();
                     follower.followPath(scorePickup3, true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
-                    intake.kick();
+                    intake.kickSequence();
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(-1);
@@ -172,5 +176,9 @@ public class TwelveArtifacts extends OpMode {
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
         telemetry.update();
+    }
+
+    public void stop() {
+        autoEndPose = follower.getPose();
     }
 }

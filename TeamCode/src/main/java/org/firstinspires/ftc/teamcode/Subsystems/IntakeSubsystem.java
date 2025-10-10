@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class IntakeSubsystem {
     public enum IntakeState {
@@ -17,10 +20,12 @@ public class IntakeSubsystem {
     public Timer kickerTimer;
     private DcMotorEx intake;
     private Servo kicker;
+    private DistanceSensor dsensor;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         kicker = hardwareMap.get(Servo.class, "kicker");
+        dsensor = hardwareMap.get(DistanceSensor.class, "csensor");
 
         kickerTimer = new Timer();
     }
@@ -48,20 +53,32 @@ public class IntakeSubsystem {
         setIntakeState(IntakeState.INTAKE);
     }
 
-    public void partialIntake() {
-        setIntakeState(IntakeState.PARTIALINTAKE);
+    public void stop() {
+        setIntakeState(IntakeState.STOP);
+    }
+
+    public void reverse() {
+        setIntakeState(IntakeState.REVERSE);
+    }
+
+    public void kickSequence() {
+        for(int i = 0; i<= 2; i++) {
+            if(dsensor.getDistance(DistanceUnit.INCH) < 1) {
+                stop();
+                kick();
+                if(kickerTimer.getElapsedTimeSeconds() > 0.675) {
+                    intake();
+                    set();
+                    kickerTimer.resetTimer();
+                }
+            } else {
+                kickerTimer.resetTimer();
+            }
+        }
     }
 
     public void kick() {
-        for(int i = 0; i<= 2; i++) {
-            if(kickerTimer.getElapsedTimeSeconds() > 0.5) {
-                kicker.setPosition(0.02);
-                if(kickerTimer.getElapsedTimeSeconds() > 0.675) {
-                    kicker.setPosition(0.23);
-                    kickerTimer.resetTimer();
-                }
-            }
-        }
+        kicker.setPosition(0);
     }
 
     public void set() {
