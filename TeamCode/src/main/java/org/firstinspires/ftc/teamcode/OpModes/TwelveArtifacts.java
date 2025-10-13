@@ -31,12 +31,12 @@ public class TwelveArtifacts extends OpMode {
 
     private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
     private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135));
-    private final Pose pickup1Pose = new Pose(23, 84, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(18, 54, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(18, 34, Math.toRadians(180));
-    private final Pose pickup1PoseC = new Pose(80, 74, Math.toRadians(180));
-    private final Pose pickup2PoseC = new Pose(80, 54, Math.toRadians(180));
-    private final Pose pickup3PoseC = new Pose(80, 34, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(21, 85, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(14, 59, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(14, 36, Math.toRadians(180));
+    private final Pose pickup1PoseC = new Pose(85, 72, Math.toRadians(180));
+    private final Pose pickup2PoseC = new Pose(100, 59, Math.toRadians(180));
+    private final Pose pickup3PoseC = new Pose(100, 36, Math.toRadians(180));
 
     private Path scorePreload;
     private PathChain scorePickup1, scorePickup2, scorePickup3, grabPickup1, grabPickup2, grabPickup3;
@@ -81,7 +81,7 @@ public class TwelveArtifacts extends OpMode {
             case 0:
                 shooter.setFlywheelVelocity(1350);
                 shooter.setTurretPosition(0);
-                intake.intake();
+                intake.stop();
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
@@ -89,14 +89,14 @@ public class TwelveArtifacts extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
                     intake.intake();
                     follower.followPath(grabPickup1,true);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if(pathTimer.getElapsedTimeSeconds() > 2) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.5) {
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
@@ -105,14 +105,14 @@ public class TwelveArtifacts extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
                     intake.intake();
                     follower.followPath(grabPickup2,true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.5) {
                     follower.followPath(scorePickup2,true);
                     setPathState(5);
                 }
@@ -121,14 +121,14 @@ public class TwelveArtifacts extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
                     intake.intake();
                     follower.followPath(grabPickup3,true);
                     setPathState(6);
                 }
                 break;
             case 6:
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.75) {
                     follower.followPath(scorePickup3, true);
                     setPathState(7);
                 }
@@ -137,7 +137,7 @@ public class TwelveArtifacts extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
                     setPathState(-1);
                 }
                 break;
@@ -175,6 +175,8 @@ public class TwelveArtifacts extends OpMode {
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
+        telemetry.addData("Intake State: ", intake.istate);
+        telemetry.addData("Distance: ", intake.getDistance());
         telemetry.update();
     }
 

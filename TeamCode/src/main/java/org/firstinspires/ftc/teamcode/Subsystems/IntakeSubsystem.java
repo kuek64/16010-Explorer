@@ -17,10 +17,12 @@ public class IntakeSubsystem {
         INTAKE, STOP, REVERSE, PARTIALINTAKE
     }
     public IntakeState istate;
-    public Timer kickerTimer;
+    public int kState;
+    public Timer kickerTimer, kTimer;
     private DcMotorEx intake;
     private Servo kicker;
     private DistanceSensor dsensor;
+    private boolean kBoolean = false;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
@@ -28,6 +30,7 @@ public class IntakeSubsystem {
         dsensor = hardwareMap.get(DistanceSensor.class, "csensor");
 
         kickerTimer = new Timer();
+        kTimer = new Timer();
     }
 
     public void intakeState() {
@@ -41,7 +44,7 @@ public class IntakeSubsystem {
             intake.setPower(-1);
             istate = IntakeState.REVERSE;
         } else if(istate == IntakeState.PARTIALINTAKE) {
-            intake.setPower(0.4);
+            intake.setPower(0.6);
         }
     }
 
@@ -60,21 +63,64 @@ public class IntakeSubsystem {
     public void reverse() {
         setIntakeState(IntakeState.REVERSE);
     }
+    public void partialintake() {
+        setIntakeState(IntakeState.PARTIALINTAKE);
+    }
 
+    // Call this once in your main loop — NOT a blocking for loop
     public void kickSequence() {
-        for(int i = 0; i<= 2; i++) {
-            if(dsensor.getDistance(DistanceUnit.INCH) < 1) {
-                stop();
-                kick();
-                if(kickerTimer.getElapsedTimeSeconds() > 0.675) {
-                    intake();
-                    set();
-                    kickerTimer.resetTimer();
-                }
-            } else {
-                kickerTimer.resetTimer();
-            }
+        double distance = dsensor.getDistance(DistanceUnit.INCH);
+
+        if (distance <= 3 && kState == -1) {
+            kickerSeriesStart();
         }
+    }
+
+    public void kickerSeriesStart() {
+        setKickState(0);
+    }
+
+    public void setKickState(int state) {
+        kState = state;
+        kTimer.resetTimer();
+    }
+
+    public void kickSeries() {
+        switch (kState) {
+            case 0:
+                stop();
+                setKickState(1);
+                break;
+
+            case 1:
+                if (kTimer.getElapsedTimeSeconds() > 0.05) {
+                    kick();
+                    setKickState(2);
+                }
+                break;
+
+            case 2:
+                if (kTimer.getElapsedTimeSeconds() > 0.3) {
+                    set();
+                    setKickState(3);
+                }
+                break;
+
+            case 3:
+                if (kTimer.getElapsedTimeSeconds() > 0.2) {
+                    intake();
+                    setKickState(-1);
+                }
+                break;
+
+            case -1:
+            default:
+                break;
+        }
+    }
+
+    public double getDistance() {
+        return dsensor.getDistance(DistanceUnit.INCH);
     }
 
     public void kick() {
@@ -87,5 +133,6 @@ public class IntakeSubsystem {
 
     public void update() {
         intakeState();
+        kickSeries();
     }
 }
