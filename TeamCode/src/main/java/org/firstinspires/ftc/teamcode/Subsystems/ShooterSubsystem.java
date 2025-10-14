@@ -84,7 +84,7 @@ public class ShooterSubsystem {
             setTurretPosition(0);
         } else {
             pos = Math.max(TURRET_MIN, Math.min(TURRET_MAX, pos));
-            setFlywheelVelocity(pos);
+            setTurretPosition(pos);
         }
     }
 

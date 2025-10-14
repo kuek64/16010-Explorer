@@ -31,9 +31,12 @@ public class TwelveArtifacts extends OpMode {
 
     private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
     private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135));
-    private final Pose pickup1Pose = new Pose(21, 85, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(21, 84, Math.toRadians(180));
+    private final Pose intake1Pose = new Pose(42, 84, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(14, 59, Math.toRadians(180));
+    private final Pose intake2Pose = new Pose(42, 59, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(14, 36, Math.toRadians(180));
+    private final Pose intake3Pose = new Pose(42, 36, Math.toRadians(180));
     private final Pose pickup1PoseC = new Pose(85, 72, Math.toRadians(180));
     private final Pose pickup2PoseC = new Pose(100, 59, Math.toRadians(180));
     private final Pose pickup3PoseC = new Pose(100, 36, Math.toRadians(180));
@@ -46,8 +49,10 @@ public class TwelveArtifacts extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickup1PoseC, pickup1Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .addPath(new BezierLine(scorePose, intake1Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), intake1Pose.getHeading())
+                .addPath(new BezierCurve(intake1Pose, pickup1PoseC, pickup1Pose))
+                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -56,8 +61,10 @@ public class TwelveArtifacts extends OpMode {
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickup2PoseC, pickup2Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
+                .addPath(new BezierLine(scorePose, intake2Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), intake2Pose.getHeading())
+                .addPath(new BezierCurve(intake2Pose, pickup2PoseC, pickup2Pose))
+                .setLinearHeadingInterpolation(intake2Pose.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -66,8 +73,10 @@ public class TwelveArtifacts extends OpMode {
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickup3PoseC, pickup3Pose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
+                .addPath(new BezierLine(scorePose, intake3Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), intake3Pose.getHeading())
+                .addPath(new BezierCurve(intake3Pose, pickup3PoseC, pickup3Pose))
+                .setLinearHeadingInterpolation(intake3Pose.getHeading(), pickup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -79,7 +88,7 @@ public class TwelveArtifacts extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                shooter.setFlywheelVelocity(1350);
+                shooter.setFlywheelVelocity(1250);
                 shooter.setTurretPosition(0);
                 intake.stop();
                 follower.followPath(scorePreload);
@@ -143,7 +152,7 @@ public class TwelveArtifacts extends OpMode {
                 break;
         }
     }
-    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
+
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();

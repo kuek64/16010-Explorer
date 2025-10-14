@@ -63,11 +63,11 @@ public class IntakeSubsystem {
     public void reverse() {
         setIntakeState(IntakeState.REVERSE);
     }
+
     public void partialintake() {
         setIntakeState(IntakeState.PARTIALINTAKE);
     }
 
-    // Call this once in your main loop — NOT a blocking for loop
     public void kickSequence() {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
 
