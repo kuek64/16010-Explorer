@@ -31,26 +31,10 @@ public class SoloDrive extends OpMode {
     public IntakeSubsystem intake;
 
     public static Follower follower;
+    public static Pose resetPose = new Pose(72,72,90);
     public static Pose autoEndPose;
-
-    private Supplier<PathChain> pathChain;
-
-    private static final int TURRET_MIN = -325;
-    private static final int TURRET_MAX = 325;
-    private static final double TICKS_PER_DEGREE = 2.11604166667*(1150/435); // tune this
-    public static double strength = 1.2;
-    public double lastTx = 0;
-    public static double p = 650;
-    public static double i = 0;
-    public static double d = 10;
-    public static double f = 0;
+    private PathChain pathChain;
     public static int vel = 1350;
-    public static int pos = 0;
-    public static double pow = 0;
-    public static int refreshRate = 200;
-    public static double power = 17;
-    public static int targetID = 0;
-    private static int id;
 
     public void init() {
         shooter = new ShooterSubsystem(hardwareMap);
@@ -61,7 +45,7 @@ public class SoloDrive extends OpMode {
         follower.setStartingPose(autoEndPose == null ? new Pose() : autoEndPose);
         follower.update();
 
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+        pathChain = follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98,0))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
@@ -78,8 +62,7 @@ public class SoloDrive extends OpMode {
 
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true);
-        shooter.setFlywheelVelocity(vel);
+        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
 
         if(gamepad1.x) {
             intake.reverse();
@@ -94,6 +77,10 @@ public class SoloDrive extends OpMode {
             intake.set();
         }
 
+        if(gamepad1.right_stick_button) {
+            follower.setPose(resetPose);
+        }
+
         if(gamepad1.dpad_down) {
             vel = 1350;
         } else if(gamepad1.dpad_up) {
@@ -103,6 +90,7 @@ public class SoloDrive extends OpMode {
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
+        telemetry.addData("Turret Pos: ", shooter.getPos());
         telemetry.update();
     }
 

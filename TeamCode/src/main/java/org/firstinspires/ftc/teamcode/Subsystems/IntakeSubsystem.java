@@ -44,7 +44,7 @@ public class IntakeSubsystem {
             intake.setPower(-1);
             istate = IntakeState.REVERSE;
         } else if(istate == IntakeState.PARTIALINTAKE) {
-            intake.setPower(0.6);
+            intake.setPower(0.85);
         }
     }
 
@@ -100,7 +100,7 @@ public class IntakeSubsystem {
                 break;
 
             case 2:
-                if (kTimer.getElapsedTimeSeconds() > 0.3) {
+                if (kTimer.getElapsedTimeSeconds() > 0.325) {
                     set();
                     setKickState(3);
                 }
@@ -108,7 +108,7 @@ public class IntakeSubsystem {
 
             case 3:
                 if (kTimer.getElapsedTimeSeconds() > 0.2) {
-                    intake();
+                    partialintake();
                     setKickState(-1);
                 }
                 break;

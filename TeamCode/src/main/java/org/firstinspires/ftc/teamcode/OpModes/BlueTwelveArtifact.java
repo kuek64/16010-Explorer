@@ -1,24 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous (name = "Blue 9+3", group = "Autonomous")
-public class TwelveArtifacts extends OpMode {
+public class BlueTwelveArtifact extends OpMode {
     public static Follower follower;
     public static Pose autoEndPose;
 
@@ -31,12 +27,12 @@ public class TwelveArtifacts extends OpMode {
 
     private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
     private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135));
-    private final Pose pickup1Pose = new Pose(21, 84, Math.toRadians(180));
-    private final Pose intake1Pose = new Pose(42, 84, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(14, 59, Math.toRadians(180));
-    private final Pose intake2Pose = new Pose(42, 59, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(14, 36, Math.toRadians(180));
-    private final Pose intake3Pose = new Pose(42, 36, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(18, 84.5, Math.toRadians(180));
+    private final Pose intake1Pose = new Pose(52, 84.5, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(10, 62.5, Math.toRadians(180));
+    private final Pose intake2Pose = new Pose(60, 62.5, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(10, 37.5, Math.toRadians(180));
+    private final Pose intake3Pose = new Pose(60, 37.5, Math.toRadians(180));
     private final Pose pickup1PoseC = new Pose(85, 72, Math.toRadians(180));
     private final Pose pickup2PoseC = new Pose(100, 59, Math.toRadians(180));
     private final Pose pickup3PoseC = new Pose(100, 36, Math.toRadians(180));
@@ -51,8 +47,10 @@ public class TwelveArtifacts extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake1Pose.getHeading())
-                .addPath(new BezierCurve(intake1Pose, pickup1PoseC, pickup1Pose))
+                .setBrakingStrength(0.25)
+                .addPath(new BezierLine(intake1Pose, pickup1Pose))
                 .setLinearHeadingInterpolation(intake1Pose.getHeading(), pickup1Pose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -63,8 +61,10 @@ public class TwelveArtifacts extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake2Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake2Pose.getHeading())
-                .addPath(new BezierCurve(intake2Pose, pickup2PoseC, pickup2Pose))
+                .setBrakingStrength(0.25)
+                .addPath(new BezierLine(intake2Pose, pickup2Pose))
                 .setLinearHeadingInterpolation(intake2Pose.getHeading(), pickup2Pose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -75,8 +75,10 @@ public class TwelveArtifacts extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake3Pose.getHeading())
-                .addPath(new BezierCurve(intake3Pose, pickup3PoseC, pickup3Pose))
+                .setBrakingStrength(0.25)
+                .addPath(new BezierLine(intake3Pose, pickup3Pose))
                 .setLinearHeadingInterpolation(intake3Pose.getHeading(), pickup3Pose.getHeading())
+                .setBrakingStrength(0.5)
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -88,18 +90,19 @@ public class TwelveArtifacts extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                shooter.setFlywheelVelocity(1250);
+                shooter.setFlywheelVelocity(1300);
                 shooter.setTurretPosition(0);
                 intake.stop();
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
-                if(pathTimer.getElapsedTimeSeconds() > 3) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.25) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
+                if(pathTimer.getElapsedTimeSeconds() > 4.75) {
                     intake.intake();
+                    follower.setMaxPower(0.9);
                     follower.followPath(grabPickup1,true);
                     setPathState(2);
                 }
@@ -111,17 +114,18 @@ public class TwelveArtifacts extends OpMode {
                 }
                 break;
             case 3:
-                if(pathTimer.getElapsedTimeSeconds() > 3) {
+                if(pathTimer.getElapsedTimeSeconds() > 2) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5) {
                     intake.intake();
+                    follower.setMaxPower(0.9);
                     follower.followPath(grabPickup2,true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if(pathTimer.getElapsedTimeSeconds() > 2.5) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.85) {
                     follower.followPath(scorePickup2,true);
                     setPathState(5);
                 }
@@ -132,12 +136,13 @@ public class TwelveArtifacts extends OpMode {
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 5.5) {
                     intake.intake();
+                    follower.setMaxPower(1);
                     follower.followPath(grabPickup3,true);
                     setPathState(6);
                 }
                 break;
             case 6:
-                if(pathTimer.getElapsedTimeSeconds() > 2.75) {
+                if(pathTimer.getElapsedTimeSeconds() > 3.75) {
                     follower.followPath(scorePickup3, true);
                     setPathState(7);
                 }

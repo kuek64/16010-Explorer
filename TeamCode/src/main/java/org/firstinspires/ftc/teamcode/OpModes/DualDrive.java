@@ -34,23 +34,7 @@ public class DualDrive extends OpMode {
     public static Pose autoEndPose;
 
     private Supplier<PathChain> pathChain;
-
-    private static final int TURRET_MIN = -325;
-    private static final int TURRET_MAX = 325;
-    private static final double TICKS_PER_DEGREE = 2.11604166667*(1150/435); // tune this
-    public static double strength = 1.2;
-    public double lastTx = 0;
-    public static double p = 650;
-    public static double i = 0;
-    public static double d = 10;
-    public static double f = 0;
     public static int vel = 1350;
-    public static int pos = 0;
-    public static double pow = 0;
-    public static int refreshRate = 200;
-    public static double power = 17;
-    public static int targetID = 0;
-    private static int id;
 
     public void init() {
         shooter = new ShooterSubsystem(hardwareMap);
@@ -78,8 +62,7 @@ public class DualDrive extends OpMode {
 
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true);
-        shooter.setFlywheelVelocity(vel);
+        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
 
         if(gamepad2.x) {
             intake.reverse();

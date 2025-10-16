@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -12,14 +13,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.List;
 
+@Configurable
 public class ShooterSubsystem {
+    public static double FLYWHEEL_VELOCITY_SLOPE = 5.38;     // velocity change per inch (adjustable)
+    public static double FLYWHEEL_VELOCITY_OFFSET = 1300;   // base velocity
+    public static double FLYWHEEL_MIN_VELOCITY = 1200;
+    public static double FLYWHEEL_MAX_VELOCITY = 1600;
+    private int previousTurretPos = 0;
+    private double previousFlywheelVel = 0;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
-    private static final int TURRET_MIN = -325;
-    private static final int TURRET_MAX = 325;
-    private static final double TICKS_PER_DEGREE = 2.11604166667*(1150/435); // tune this
     public static double strength = 1.2;
+    public static double slope = -5.26;
+    public static double offset = -150;
     public static int pos = 0;
     public static double p = 650;
     public static double i = 0;
@@ -55,39 +62,89 @@ public class ShooterSubsystem {
     }
 
     public void update() {
-
     }
 
-    public void alignTurret(double x, double y, double heading, boolean blue) {
+    // You may want to store previousPos as a class variable
+    private int previousPos = 0;
+
+    public void alignTurret(double x, double y, double headingDeg, boolean blue, Telemetry telemetry) {
+        // ---- Field goal coordinates ----
+        headingDeg = Math.toDegrees(headingDeg);
         final double blueGoalX = 17.0;
         final double blueGoalY = 133.0;
         final double redGoalX  = 127.0;
         final double redGoalY  = 133.0;
 
+        // ---- Turret physical offset (4 inches behind robot along Y-axis) ----
+        double turretOffsetY = 4.0;
+
+        // ---- Optional look-ahead to reduce swings when driving close ----
+        double lookAhead = 3.0; // inches forward along robot heading
+        double headingRad = Math.toRadians(headingDeg);
+        double lookAheadX = lookAhead * Math.cos(headingRad);
+        double lookAheadY = lookAhead * Math.sin(headingRad);
+
+        // ---- Pick correct goal ----
         double goalX = blue ? blueGoalX : redGoalX;
         double goalY = blue ? blueGoalY : redGoalY;
 
-        double dx = goalX - x;
-        double dy = goalY - y;
+        double dx = goalX - (x + lookAheadX);
+        double dy = goalY - ((y - turretOffsetY) + lookAheadY);
 
-        double angleToGoal = Math.toDegrees(Math.atan2(dx, dy));
+        double angleToGoal = Math.toDegrees(Math.atan2(dy, dx));
 
-        double tx = angleToGoal - heading;
-
-        tx = (tx + 540) % 360 - 180;
-
-        int adjustment = (int) (tx * TICKS_PER_DEGREE);
-
-        pos += (int) (strength * adjustment / 10.0);
-
-        if(pos > TURRET_MAX || pos < TURRET_MIN) {
-            setTurretPosition(0);
+        double turretAngle;
+        if (blue) {
+            turretAngle = angleToGoal - headingDeg;
         } else {
-            pos = Math.max(TURRET_MIN, Math.min(TURRET_MAX, pos));
-            setTurretPosition(pos);
+            turretAngle = (angleToGoal + 180) - headingDeg;
         }
+
+        turretAngle = (turretAngle + 540) % 360 - 180;
+
+        int targetTicks = (int) (slope * turretAngle + offset);
+
+        // ---- Step 6: Clamp to turret limits ±500 ticks ----
+        final int TURRET_MIN = -500;
+        final int TURRET_MAX = 500;
+        targetTicks = Math.max(TURRET_MIN, Math.min(TURRET_MAX, targetTicks));
+
+        pos = previousPos + (int)(0.1 * (targetTicks - previousPos));
+        previousPos = pos;
+
+        // ---- Step 8: Compute distance to goal ----
+        double distance = Math.hypot(dx, dy);
+
+        // ---- Step 9: Map distance → flywheel velocity using global slope/offset ----
+        double targetVelocity = FLYWHEEL_VELOCITY_OFFSET + (distance - 72) * FLYWHEEL_VELOCITY_SLOPE; // 72 as reference distance
+        targetVelocity = Math.max(FLYWHEEL_MIN_VELOCITY, Math.min(FLYWHEEL_MAX_VELOCITY, targetVelocity));
+
+        // ---- Step 10: Smooth flywheel velocity using global rate ----
+        double smoothedVelocity = previousFlywheelVel + (targetVelocity - previousFlywheelVel);
+        previousFlywheelVel = smoothedVelocity;
+        setFlywheelVelocity((int) smoothedVelocity);
+
+        // ---- Send target to turret ----
+        setFlywheelVelocity((int) smoothedVelocity);
+        setTurretPosition(pos);
+
+        // ---- Telemetry debug info ----
+        telemetry.addData("dx", dx);
+        telemetry.addData("dy", dy);
+        telemetry.addData("angleToGoal", angleToGoal);
+        telemetry.addData("turretAngle (normalized)", turretAngle);
+        telemetry.addData("headingDeg", headingDeg);
+        telemetry.addData("targetTicks (raw)", targetTicks);
+        telemetry.addData("turretCurrent", turret.getCurrentPosition());
+        telemetry.addData("pos (smoothed)", pos);
+        telemetry.update();
     }
 
+
+
+    public int getPos() {
+        return turret.getCurrentPosition();
+    }
     public void telemetry() {
     }
 }
