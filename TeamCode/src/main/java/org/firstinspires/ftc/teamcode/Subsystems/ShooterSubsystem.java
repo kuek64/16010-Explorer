@@ -15,18 +15,23 @@ import java.util.List;
 
 @Configurable
 public class ShooterSubsystem {
-    public static double FLYWHEEL_VELOCITY_SLOPE = 5.38;     // velocity change per inch (adjustable)
-    public static double FLYWHEEL_VELOCITY_OFFSET = 1300;   // base velocity
+    public static double FLYWHEEL_VELOCITY_SLOPE = 9;     // velocity change per inch (adjustable)
+    public static double FLYWHEEL_VELOCITY_OFFSET = 1200;   // base velocity
     public static double FLYWHEEL_MIN_VELOCITY = 1200;
     public static double FLYWHEEL_MAX_VELOCITY = 1600;
+    public static double blueGoalX = 0.0;
+    public static double blueGoalY = 133.0;
+    public static double redGoalX  = 144.0;
+    public static double redGoalY  = 133.0;
     private int previousTurretPos = 0;
     private double previousFlywheelVel = 0;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
     public static double strength = 1.2;
-    public static double slope = -5.26;
-    public static double offset = -150;
+    public static double slope = -5.4;
+    public static double offset = -140;
+    public static double distanceScalar = -25;
     public static int pos = 0;
     public static double p = 650;
     public static double i = 0;
@@ -70,26 +75,16 @@ public class ShooterSubsystem {
     public void alignTurret(double x, double y, double headingDeg, boolean blue, Telemetry telemetry) {
         // ---- Field goal coordinates ----
         headingDeg = Math.toDegrees(headingDeg);
-        final double blueGoalX = 17.0;
-        final double blueGoalY = 133.0;
-        final double redGoalX  = 127.0;
-        final double redGoalY  = 133.0;
 
         // ---- Turret physical offset (4 inches behind robot along Y-axis) ----
         double turretOffsetY = 4.0;
-
-        // ---- Optional look-ahead to reduce swings when driving close ----
-        double lookAhead = 3.0; // inches forward along robot heading
-        double headingRad = Math.toRadians(headingDeg);
-        double lookAheadX = lookAhead * Math.cos(headingRad);
-        double lookAheadY = lookAhead * Math.sin(headingRad);
 
         // ---- Pick correct goal ----
         double goalX = blue ? blueGoalX : redGoalX;
         double goalY = blue ? blueGoalY : redGoalY;
 
-        double dx = goalX - (x + lookAheadX);
-        double dy = goalY - ((y - turretOffsetY) + lookAheadY);
+        double dx = goalX - (x+x/distanceScalar);
+        double dy = goalY - ((y - turretOffsetY +y/distanceScalar));
 
         double angleToGoal = Math.toDegrees(Math.atan2(dy, dx));
 
@@ -105,17 +100,16 @@ public class ShooterSubsystem {
         int targetTicks = (int) (slope * turretAngle + offset);
 
         // ---- Step 6: Clamp to turret limits ±500 ticks ----
-        final int TURRET_MIN = -500;
-        final int TURRET_MAX = 500;
+        final int TURRET_MIN = -650;
+        final int TURRET_MAX = 650;
         targetTicks = Math.max(TURRET_MIN, Math.min(TURRET_MAX, targetTicks));
 
         pos = previousPos + (int)(0.1 * (targetTicks - previousPos));
         previousPos = pos;
 
         // ---- Step 8: Compute distance to goal ----
-        double distance = Math.hypot(dx, dy);
+        double distance = Math.abs(Math.hypot(dx, dy));
 
-        // ---- Step 9: Map distance → flywheel velocity using global slope/offset ----
         double targetVelocity = FLYWHEEL_VELOCITY_OFFSET + (distance - 72) * FLYWHEEL_VELOCITY_SLOPE; // 72 as reference distance
         targetVelocity = Math.max(FLYWHEEL_MIN_VELOCITY, Math.min(FLYWHEEL_MAX_VELOCITY, targetVelocity));
 

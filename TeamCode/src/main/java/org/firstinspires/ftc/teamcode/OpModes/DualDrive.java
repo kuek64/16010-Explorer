@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.OpModes.SoloDrive.resetPose;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -75,6 +77,10 @@ public class DualDrive extends OpMode {
             intake.stop();
         } else {
             intake.set();
+        }
+
+        if(gamepad1.right_stick_button) {
+            follower.setPose(resetPose);
         }
 
         if(gamepad2.dpad_down) {
