@@ -108,13 +108,14 @@ public class IntakeSubsystem {
 
             case 3:
                 if (kTimer.getElapsedTimeSeconds() > 0.2) {
-                    partialintake();
+                    intake();
                     setKickState(-1);
                 }
                 break;
 
             case -1:
             default:
+                intake();
                 break;
         }
     }
