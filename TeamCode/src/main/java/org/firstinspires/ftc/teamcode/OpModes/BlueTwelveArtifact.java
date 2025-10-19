@@ -26,7 +26,7 @@ public class BlueTwelveArtifact extends OpMode {
     private int pathState;
 
     private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
-    private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(135));
+    private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(18, 84.5, Math.toRadians(180));
     private final Pose intake1Pose = new Pose(52, 84.5, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(10, 62.5, Math.toRadians(180));
@@ -94,7 +94,7 @@ public class BlueTwelveArtifact extends OpMode {
         switch (pathState) {
             case 0:
                 shooter.setFlywheelVelocity(1300);
-                shooter.setTurretPosition(0);
+                shooter.setTurretPosition(270);
                 intake.stop();
                 follower.followPath(scorePreload);
                 setPathState(1);
@@ -159,6 +159,7 @@ public class BlueTwelveArtifact extends OpMode {
                 }
                 break;
             case 8:
+                shooter.setTurretPosition(0);
                 follower.followPath(leave);
                 setPathState(-1);
         }
