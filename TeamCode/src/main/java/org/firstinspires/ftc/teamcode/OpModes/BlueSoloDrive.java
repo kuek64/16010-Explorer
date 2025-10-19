@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.OpModes.BlueTwelveArtifact.autoEndPose;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -7,34 +9,22 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 @Configurable
-@TeleOp (name = "Solo Drive", group = "TeleOp")
-public class SoloDrive extends OpMode {
+@TeleOp (name = "Blue Solo Drive", group = "TeleOp")
+public class BlueSoloDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
 
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,90);
-    public static Pose autoEndPose;
     private PathChain pathChain;
-    public static int vel = 1350;
 
     public void init() {
         shooter = new ShooterSubsystem(hardwareMap);
@@ -81,11 +71,6 @@ public class SoloDrive extends OpMode {
             follower.setPose(resetPose);
         }
 
-        if(gamepad1.dpad_down) {
-            vel = 1350;
-        } else if(gamepad1.dpad_up) {
-            vel = 1600;
-        }
 
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
