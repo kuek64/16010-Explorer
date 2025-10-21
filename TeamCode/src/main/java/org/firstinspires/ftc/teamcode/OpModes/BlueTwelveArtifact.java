@@ -93,8 +93,8 @@ public class BlueTwelveArtifact extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                shooter.setFlywheelVelocity(1300);
-                shooter.setTurretPosition(270);
+                shooter.setFlywheelVelocity(1275);
+                shooter.setTurretPosition(260);
                 intake.stop();
                 follower.followPath(scorePreload);
                 setPathState(1);
@@ -188,6 +188,7 @@ public class BlueTwelveArtifact extends OpMode {
     }
 
     public void loop() {
+        intake.overIntake();
         follower.update();
         shooter.update();
         intake.update();

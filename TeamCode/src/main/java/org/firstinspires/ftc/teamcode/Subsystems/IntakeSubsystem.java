@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class IntakeSubsystem {
@@ -33,9 +34,13 @@ public class IntakeSubsystem {
         kTimer = new Timer();
     }
 
+    public double getCurrent() {
+        return intake.getCurrent(CurrentUnit.AMPS);
+    }
+
     public void intakeState() {
         if(istate == IntakeState.INTAKE) {
-            intake.setPower(1);
+            intake.setPower(0.85);
             istate = IntakeState.INTAKE;
         } else if(istate == IntakeState.STOP) {
             intake.setPower(0);
@@ -68,10 +73,16 @@ public class IntakeSubsystem {
         setIntakeState(IntakeState.PARTIALINTAKE);
     }
 
+    public void overIntake() {
+        if(intake.getCurrent(CurrentUnit.AMPS) > 4) {
+
+        }
+    }
+
     public void kickSequence() {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
 
-        if (distance <= 3 && kState == -1) {
+        if (distance <= 2.9 && kState == -1) {
             kickerSeriesStart();
         }
     }
@@ -135,5 +146,6 @@ public class IntakeSubsystem {
     public void update() {
         intakeState();
         kickSeries();
+        overIntake();
     }
 }

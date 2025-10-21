@@ -23,7 +23,7 @@ public class BlueSoloDrive extends OpMode {
     public IntakeSubsystem intake;
 
     public static Follower follower;
-    public static Pose resetPose = new Pose(72,72,90);
+    public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
     private PathChain pathChain;
 
     public void init() {
@@ -46,6 +46,7 @@ public class BlueSoloDrive extends OpMode {
     }
 
     public void loop() {
+        intake.overIntake();
         follower.update();
         shooter.update();
         intake.update();
@@ -76,6 +77,7 @@ public class BlueSoloDrive extends OpMode {
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
         telemetry.addData("Turret Pos: ", shooter.getPos());
+        telemetry.addData("Intake Current: ", intake.getCurrent());
         telemetry.update();
     }
 

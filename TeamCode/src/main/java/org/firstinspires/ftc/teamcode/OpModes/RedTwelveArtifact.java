@@ -29,8 +29,8 @@ public class RedTwelveArtifact extends OpMode {
     private final Pose bluescorePose = new Pose(60, 83.5, Math.toRadians(180));
     private final Pose bluepickup1Pose = new Pose(18, 84.5, Math.toRadians(180));
     private final Pose blueintake1Pose = new Pose(52, 84.5, Math.toRadians(180));
-    private final Pose bluepickup2Pose = new Pose(10, 62.5, Math.toRadians(180));
-    private final Pose blueintake2Pose = new Pose(60, 62.5, Math.toRadians(180));
+    private final Pose bluepickup2Pose = new Pose(10, 60.5, Math.toRadians(180));
+    private final Pose blueintake2Pose = new Pose(60, 60.5, Math.toRadians(180));
     private final Pose bluepickup3Pose = new Pose(10, 37.5, Math.toRadians(180));
     private final Pose blueintake3Pose = new Pose(60, 37.5, Math.toRadians(180));
     private final Pose blueleavePose = new Pose(50, 73.5, Math.toRadians(135));
@@ -103,8 +103,8 @@ public class RedTwelveArtifact extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                shooter.setFlywheelVelocity(1300);
-                shooter.setTurretPosition(270);
+                shooter.setFlywheelVelocity(1275);
+                shooter.setTurretPosition(-260);
                 intake.stop();
                 follower.followPath(scorePreload);
                 setPathState(1);

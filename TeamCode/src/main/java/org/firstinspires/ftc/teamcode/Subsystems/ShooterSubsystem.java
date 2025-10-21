@@ -19,11 +19,11 @@ import java.util.List;
 public class ShooterSubsystem {
     public static double turretOffsetY = -4.0;
     public static double turretOffsetX  = 0;
-    public static double fIntercept = 834.35;
+    public static double fIntercept = 894.35;
     public static double blueGoalX = 12;
-    public static double blueGoalY = 132;
+    public static double blueGoalY = 134;
     public static double redGoalX  = 136;
-    public static double redGoalY  = 132;
+    public static double redGoalY  = 134;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
@@ -82,23 +82,17 @@ public class ShooterSubsystem {
 
         int targetTicks = (int) (tSlope * turretAngle);
 
-        final int TURRET_MIN = -650;
-        final int TURRET_MAX = 650;
+        final int TURRET_MIN = -550;
+        final int TURRET_MAX = 550;
         targetTicks = Math.max(TURRET_MIN, Math.min(TURRET_MAX, targetTicks));
 
         pos = targetTicks;
+
         double distance = Math.hypot(goalX-x, goalY-y);
         int vel = (int) (distance * fSlope + fIntercept);
 
         setFlywheelVelocity(vel);
         setTurretPosition(pos);
-
-        telemetry.addData("Angle To Goal: ", angleToGoal);
-        telemetry.addData("Turret Angle: ", turretAngle);
-        telemetry.addData("Heading: ", headingDeg);
-        telemetry.addData("Target Ticks: ", targetTicks);
-        telemetry.addData("Turret Current Position: ", turret.getCurrentPosition());
-        telemetry.update();
     }
 
 

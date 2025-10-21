@@ -25,7 +25,7 @@ public class RedDualDrive extends OpMode {
     public IntakeSubsystem intake;
 
     public static Follower follower;
-    public static Pose resetPose = new Pose(72,72,90);
+    public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
 
     private Supplier<PathChain> pathChain;
 
@@ -49,6 +49,7 @@ public class RedDualDrive extends OpMode {
     }
 
     public void loop() {
+        intake.overIntake();
         follower.update();
         shooter.update();
         intake.update();
