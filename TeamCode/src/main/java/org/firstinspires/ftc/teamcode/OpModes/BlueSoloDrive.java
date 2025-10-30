@@ -24,6 +24,7 @@ public class BlueSoloDrive extends OpMode {
 
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
+    public static Pose parkPose = new Pose(110, 39.5, Math.toRadians(90));
     private PathChain pathChain;
 
     public void init() {
@@ -55,21 +56,20 @@ public class BlueSoloDrive extends OpMode {
 
         shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
 
-        if(gamepad1.x) {
-            intake.reverse();
-        } else {
-            intake.intake();
+        if(gamepad1.xWasPressed()) {
+            intake.switchIntake();
         }
 
         if(gamepad1.a) {
-            intake.kick();
-            intake.stop();
-        } else {
-            intake.set();
+            intake.kickSequenceTeleOp();
         }
 
         if(gamepad1.right_stick_button) {
             follower.setPose(resetPose);
+        }
+
+        if(gamepad1.back) {
+            follower.holdPoint(parkPose);
         }
 
 

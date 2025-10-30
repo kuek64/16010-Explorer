@@ -18,7 +18,7 @@ public class IntakeSubsystem {
         INTAKE, STOP, REVERSE, PARTIALINTAKE
     }
     public IntakeState istate;
-    public int kState;
+    public int kState = -1;
     public Timer kickerTimer, kTimer;
     private DcMotorEx intake;
     private Servo kicker;
@@ -40,7 +40,7 @@ public class IntakeSubsystem {
 
     public void intakeState() {
         if(istate == IntakeState.INTAKE) {
-            intake.setPower(0.85);
+            intake.setPower(1);
             istate = IntakeState.INTAKE;
         } else if(istate == IntakeState.STOP) {
             intake.setPower(0);
@@ -50,6 +50,19 @@ public class IntakeSubsystem {
             istate = IntakeState.REVERSE;
         } else if(istate == IntakeState.PARTIALINTAKE) {
             intake.setPower(0.85);
+        }
+    }
+
+    public void switchIntake() {
+        if(istate == IntakeState.INTAKE) {
+            stop();
+            istate = IntakeState.STOP;
+        } else if(istate == IntakeState.STOP) {
+            intake();
+            istate = IntakeState.INTAKE;
+        } else {
+            intake();
+            istate = IntakeState.INTAKE;
         }
     }
 
@@ -82,7 +95,15 @@ public class IntakeSubsystem {
     public void kickSequence() {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
 
-        if (distance <= 2.9 && kState == -1) {
+        if (distance <= 2.5 && kState == -1) {
+            kickerSeriesStart();
+        }
+    }
+
+    public void kickSequenceTeleOp() {
+        double distance = dsensor.getDistance(DistanceUnit.INCH);
+
+        if (distance <= 2.5 && kState == -1) {
             kickerSeriesStart();
         }
     }
@@ -126,7 +147,6 @@ public class IntakeSubsystem {
 
             case -1:
             default:
-                intake();
                 break;
         }
     }

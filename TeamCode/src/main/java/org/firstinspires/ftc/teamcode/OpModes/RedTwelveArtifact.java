@@ -55,7 +55,6 @@ public class RedTwelveArtifact extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake1Pose.getHeading())
-                .setBrakingStrength(0.25)
                 .addPath(new BezierLine(intake1Pose, pickup1Pose))
                 .setLinearHeadingInterpolation(intake1Pose.getHeading(), pickup1Pose.getHeading())
                 .setBrakingStrength(0.5)
@@ -69,7 +68,6 @@ public class RedTwelveArtifact extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake2Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake2Pose.getHeading())
-                .setBrakingStrength(0.25)
                 .addPath(new BezierLine(intake2Pose, pickup2Pose))
                 .setLinearHeadingInterpolation(intake2Pose.getHeading(), pickup2Pose.getHeading())
                 .setBrakingStrength(0.5)
@@ -83,7 +81,6 @@ public class RedTwelveArtifact extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, intake3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), intake3Pose.getHeading())
-                .setBrakingStrength(0.25)
                 .addPath(new BezierLine(intake3Pose, pickup3Pose))
                 .setLinearHeadingInterpolation(intake3Pose.getHeading(), pickup3Pose.getHeading())
                 .setBrakingStrength(0.5)
@@ -121,7 +118,7 @@ public class RedTwelveArtifact extends OpMode {
                 }
                 break;
             case 2:
-                if(pathTimer.getElapsedTimeSeconds() > 2) {
+                if(pathTimer.getElapsedTimeSeconds() > 1.75) {
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
@@ -130,7 +127,7 @@ public class RedTwelveArtifact extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 2) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                if(pathTimer.getElapsedTimeSeconds() > 4.5) {
                     intake.intake();
                     follower.setMaxPower(0.9);
                     follower.followPath(grabPickup2,true);
@@ -138,7 +135,7 @@ public class RedTwelveArtifact extends OpMode {
                 }
                 break;
             case 4:
-                if(pathTimer.getElapsedTimeSeconds() > 2.85) {
+                if(pathTimer.getElapsedTimeSeconds() > 2.75) {
                     follower.followPath(scorePickup2,true);
                     setPathState(5);
                 }
@@ -147,7 +144,7 @@ public class RedTwelveArtifact extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 2.75) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 5.5) {
+                if(pathTimer.getElapsedTimeSeconds() > 5) {
                     intake.intake();
                     follower.setMaxPower(1);
                     follower.followPath(grabPickup3,true);

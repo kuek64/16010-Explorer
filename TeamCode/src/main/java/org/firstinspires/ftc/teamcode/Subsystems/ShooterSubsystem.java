@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -19,26 +20,29 @@ import java.util.List;
 public class ShooterSubsystem {
     public static double turretOffsetY = -4.0;
     public static double turretOffsetX  = 0;
-    public static double fIntercept = 894.35;
-    public static double blueGoalX = 12;
+    public static double fIntercept = 944.35;
+    public static double blueGoalX = 16;
     public static double blueGoalY = 134;
-    public static double redGoalX  = 136;
+    public static double redGoalX  = 132;
     public static double redGoalY  = 134;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
+    private RGBLight light = null;
     public static double tSlope = 5.60729166667;
-    public static double fSlope = 4.77182023252;
+    public static double fSlope = 4.5618202325;
     public static int pos = 0;
-    public static double p = 650;
+    public static int vel = 0;
+    public static double p = 900;
     public static double i = 0;
-    public static double d = 10;
+    public static double d = 5;
     public static double f = 0;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
         flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
+        light = new RGBLight(hardwareMap.get(Servo.class, "light"));
 
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setDirection(DcMotor.Direction.REVERSE);
@@ -52,6 +56,7 @@ public class ShooterSubsystem {
     }
 
     public void setTurretPosition(int pos) {
+        flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
         turret.setPositionPIDFCoefficients(17);
         turret.setTargetPosition(pos);
         turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -64,6 +69,7 @@ public class ShooterSubsystem {
     }
 
     public void update() {
+        ready();
     }
 
     public void alignTurret(double x, double y, double heading, boolean blue, Telemetry telemetry) {
@@ -82,20 +88,29 @@ public class ShooterSubsystem {
 
         int targetTicks = (int) (tSlope * turretAngle);
 
-        final int TURRET_MIN = -550;
-        final int TURRET_MAX = 550;
-        targetTicks = Math.max(TURRET_MIN, Math.min(TURRET_MAX, targetTicks));
+        final int TURRET_MIN = -710;
+        final int TURRET_MAX = 710;
 
-        pos = targetTicks;
+        if(targetTicks > TURRET_MAX || targetTicks < TURRET_MIN) {
+            pos = 0;
+        } else {
+            pos = targetTicks;
+        }
 
         double distance = Math.hypot(goalX-x, goalY-y);
-        int vel = (int) (distance * fSlope + fIntercept);
+        vel = (int) (distance * fSlope + fIntercept);
 
         setFlywheelVelocity(vel);
         setTurretPosition(pos);
     }
 
-
+    public void ready() {
+        if((Math.abs(turret.getCurrentPosition() - pos) < 5) && (Math.abs(flywheel1.getVelocity() - vel) < 80)) {
+            light.green();
+        } else {
+            light.red();
+        }
+    }
 
     public int getPos() {
         return turret.getCurrentPosition();
