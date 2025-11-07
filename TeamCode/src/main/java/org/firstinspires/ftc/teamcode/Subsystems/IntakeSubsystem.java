@@ -23,12 +23,14 @@ public class IntakeSubsystem {
     private DcMotorEx intake;
     private Servo kicker;
     private DistanceSensor dsensor;
+    private DistanceSensor dsensor2;
     private boolean kBoolean = false;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         kicker = hardwareMap.get(Servo.class, "kicker");
         dsensor = hardwareMap.get(DistanceSensor.class, "csensor");
+        dsensor2 = hardwareMap.get(DistanceSensor.class, "csensor2");
 
         kickerTimer = new Timer();
         kTimer = new Timer();
@@ -94,16 +96,15 @@ public class IntakeSubsystem {
 
     public void kickSequence() {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
+        double distance2 = dsensor2.getDistance(DistanceUnit.INCH);
 
-        if (distance <= 2.5 && kState == -1) {
+        if ((distance <= 2 || distance2 <= 1.25) && kState == -1) {
             kickerSeriesStart();
         }
     }
 
     public void kickSequenceTeleOp() {
-        double distance = dsensor.getDistance(DistanceUnit.INCH);
-
-        if (distance <= 2.5 && kState == -1) {
+        if (kState == -1) {
             kickerSeriesStart();
         }
     }
@@ -123,28 +124,24 @@ public class IntakeSubsystem {
                 stop();
                 setKickState(1);
                 break;
-
             case 1:
-                if (kTimer.getElapsedTimeSeconds() > 0.05) {
+                if (kTimer.getElapsedTimeSeconds() > 0.075) {
                     kick();
                     setKickState(2);
                 }
                 break;
-
             case 2:
                 if (kTimer.getElapsedTimeSeconds() > 0.325) {
                     set();
                     setKickState(3);
                 }
                 break;
-
             case 3:
                 if (kTimer.getElapsedTimeSeconds() > 0.2) {
                     intake();
                     setKickState(-1);
                 }
                 break;
-
             case -1:
             default:
                 break;
@@ -160,7 +157,7 @@ public class IntakeSubsystem {
     }
 
     public void set() {
-        kicker.setPosition(0.23);
+        kicker.setPosition(0.25);
     }
 
     public void update() {

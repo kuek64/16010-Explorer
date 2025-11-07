@@ -55,17 +55,16 @@ public class RedSoloDrive extends OpMode {
 
         shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), false, telemetry);
 
-        if(gamepad1.x) {
+        if(gamepad1.xWasPressed()) {
+            intake.switchIntake();
+        }
+
+        if(gamepad1.bWasPressed()) {
             intake.reverse();
-        } else {
-            intake.intake();
         }
 
         if(gamepad1.a) {
-            intake.kick();
-            intake.stop();
-        } else {
-            intake.set();
+            intake.kickSequenceTeleOp();
         }
 
         if(gamepad1.right_stick_button) {
@@ -76,6 +75,7 @@ public class RedSoloDrive extends OpMode {
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
         telemetry.addData("Turret Pos: ", shooter.getPos());
+        telemetry.addData("Intake Current: ", intake.getCurrent());
         telemetry.update();
     }
 

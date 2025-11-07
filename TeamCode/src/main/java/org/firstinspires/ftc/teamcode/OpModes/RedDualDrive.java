@@ -26,7 +26,6 @@ public class RedDualDrive extends OpMode {
 
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
-
     private Supplier<PathChain> pathChain;
 
     public void init() {
@@ -58,17 +57,16 @@ public class RedDualDrive extends OpMode {
 
         shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), false, telemetry);
 
-        if(gamepad2.x) {
+        if(gamepad2.xWasPressed()) {
+            intake.switchIntake();
+        }
+
+        if(gamepad2.bWasPressed()) {
             intake.reverse();
-        } else {
-            intake.intake();
         }
 
         if(gamepad2.a) {
-            intake.kick();
-            intake.stop();
-        } else {
-            intake.set();
+            intake.kickSequenceTeleOp();
         }
 
         if(gamepad1.right_stick_button) {

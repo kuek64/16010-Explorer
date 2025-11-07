@@ -64,6 +64,10 @@ public class BlueDualDrive extends OpMode {
             intake.switchIntake();
         }
 
+        if(gamepad2.bWasPressed()) {
+            intake.reverse();
+        }
+
         if(gamepad2.a) {
             intake.kickSequenceTeleOp();
         }

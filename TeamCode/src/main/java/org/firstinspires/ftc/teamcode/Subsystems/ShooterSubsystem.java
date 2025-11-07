@@ -20,22 +20,22 @@ import java.util.List;
 public class ShooterSubsystem {
     public static double turretOffsetY = -4.0;
     public static double turretOffsetX  = 0;
-    public static double fIntercept = 944.35;
+    public static double fIntercept = 904.35;
     public static double blueGoalX = 16;
-    public static double blueGoalY = 134;
+    public static double blueGoalY = 130;
     public static double redGoalX  = 132;
-    public static double redGoalY  = 134;
+    public static double redGoalY  = 130;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
     private RGBLight light = null;
     public static double tSlope = 5.60729166667;
-    public static double fSlope = 4.5618202325;
+    public static double fSlope = 4.618202325;
     public static int pos = 0;
     public static int vel = 0;
-    public static double p = 900;
+    public static double p = 1200;
     public static double i = 0;
-    public static double d = 5;
+    public static double d = 300;
     public static double f = 0;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
@@ -73,35 +73,35 @@ public class ShooterSubsystem {
     }
 
     public void alignTurret(double x, double y, double heading, boolean blue, Telemetry telemetry) {
-        double headingDeg = Math.toDegrees(heading);
+            double headingDeg = Math.toDegrees(heading);
 
-        x = turretOffsetX + x;
-        y = turretOffsetY + y;
+            x = turretOffsetX + x;
+            y = turretOffsetY + y;
 
-        // ---- Pick correct goal ----
-        double goalX = blue ? blueGoalX : redGoalX;
-        double goalY = blue ? blueGoalY : redGoalY;
+            // ---- Pick correct goal ----
+            double goalX = blue ? blueGoalX : redGoalX;
+            double goalY = blue ? blueGoalY : redGoalY;
 
-        double angleToGoal = Math.toDegrees(Math.atan2(goalX - x, goalY - y));
+            double angleToGoal = Math.toDegrees(Math.atan2(goalX - x, goalY - y));
 
-        double turretAngle = angleToGoal + headingDeg - 90;
+            double turretAngle = angleToGoal + headingDeg - 90;
 
-        int targetTicks = (int) (tSlope * turretAngle);
+            int targetTicks = (int) (tSlope * turretAngle);
 
-        final int TURRET_MIN = -710;
-        final int TURRET_MAX = 710;
+            final int TURRET_MIN = -600;
+            final int TURRET_MAX = 600;
 
-        if(targetTicks > TURRET_MAX || targetTicks < TURRET_MIN) {
-            pos = 0;
-        } else {
-            pos = targetTicks;
-        }
+            if (targetTicks > TURRET_MAX || targetTicks < TURRET_MIN) {
+                pos = 0;
+            } else {
+                pos = targetTicks;
+            }
 
-        double distance = Math.hypot(goalX-x, goalY-y);
-        vel = (int) (distance * fSlope + fIntercept);
+            double distance = Math.hypot(goalX - x, goalY - y);
+            vel = (int) (distance * fSlope + fIntercept);
 
-        setFlywheelVelocity(vel);
-        setTurretPosition(pos);
+            setFlywheelVelocity(vel);
+            setTurretPosition(pos);
     }
 
     public void ready() {

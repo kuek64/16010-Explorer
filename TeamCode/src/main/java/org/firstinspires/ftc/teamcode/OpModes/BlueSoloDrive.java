@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class BlueSoloDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
-
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
     public static Pose parkPose = new Pose(110, 39.5, Math.toRadians(90));
@@ -60,6 +59,10 @@ public class BlueSoloDrive extends OpMode {
             intake.switchIntake();
         }
 
+        if(gamepad1.bWasPressed()) {
+            intake.reverse();
+        }
+
         if(gamepad1.a) {
             intake.kickSequenceTeleOp();
         }
@@ -71,7 +74,6 @@ public class BlueSoloDrive extends OpMode {
         if(gamepad1.back) {
             follower.holdPoint(parkPose);
         }
-
 
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
