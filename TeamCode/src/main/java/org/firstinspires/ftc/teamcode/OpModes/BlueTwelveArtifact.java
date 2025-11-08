@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "Blue 9+3", group = "Autonomous")
+@Autonomous (name = "Blue Close", group = "Autonomous")
 public class BlueTwelveArtifact extends OpMode {
     public static Follower follower;
     public static Pose autoEndPose;

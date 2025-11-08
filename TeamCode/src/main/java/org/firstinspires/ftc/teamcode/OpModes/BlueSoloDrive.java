@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@TeleOp (name = "Blue Solo Drive", group = "TeleOp")
+@TeleOp (name = "Blue Solo", group = "TeleOp")
 public class BlueSoloDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.function.Supplier;
 
 @Configurable
-@TeleOp (name = "Blue Dual Drive", group = "TeleOp")
+@TeleOp (name = "Blue Dual", group = "TeleOp")
 public class BlueDualDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
