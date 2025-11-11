@@ -28,7 +28,6 @@ public class BlueDualDrive extends OpMode {
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
     public static Pose parkPose = new Pose(110, 39.5, Math.toRadians(90));
 
-
     private Supplier<PathChain> pathChain;
 
     public void init() {
@@ -64,7 +63,7 @@ public class BlueDualDrive extends OpMode {
             intake.switchIntake();
         }
 
-        if(gamepad2.bWasPressed()) {
+        if(gamepad2.b) {
             intake.reverse();
         }
 

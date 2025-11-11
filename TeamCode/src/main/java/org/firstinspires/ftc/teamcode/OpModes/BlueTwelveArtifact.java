@@ -25,7 +25,7 @@ public class BlueTwelveArtifact extends OpMode {
 
     private int pathState;
 
-    private final Pose startPose = new Pose(28, 127, Math.toRadians(180));
+    private final Pose startPose = new Pose(29.5, 127, Math.toRadians(180));
     private final Pose scorePose = new Pose(60, 83.5, Math.toRadians(180));
     private final Pose pickup1Pose = new Pose(27, 83.5, Math.toRadians(180));
     private final Pose intake1Pose = new Pose(52, 83.5, Math.toRadians(180));
@@ -112,7 +112,7 @@ public class BlueTwelveArtifact extends OpMode {
                 }
                 break;
             case 2:
-                if(pathTimer.getElapsedTimeSeconds() > 1.3) {
+                if(pathTimer.getElapsedTimeSeconds() > 1.6) {
                     intake.stop();
                 }
                 if(pathTimer.getElapsedTimeSeconds() > 3.3) {
@@ -150,7 +150,7 @@ public class BlueTwelveArtifact extends OpMode {
                 }
                 break;
             case 6:
-                if(pathTimer.getElapsedTimeSeconds() > 3.4) {
+                if(pathTimer.getElapsedTimeSeconds() > 3.6) {
                     intake.stop();
                     follower.followPath(scorePickup3, true);
                     setPathState(7);

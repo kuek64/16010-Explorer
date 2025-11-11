@@ -61,7 +61,7 @@ public class RedDualDrive extends OpMode {
             intake.switchIntake();
         }
 
-        if(gamepad2.bWasPressed()) {
+        if(gamepad2.b) {
             intake.reverse();
         }
 
