@@ -99,7 +99,7 @@ public class IntakeSubsystem {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
         double distance2 = dsensor2.getDistance(DistanceUnit.INCH);
 
-        if ((distance <= 2 || distance2 <= 1.5 || kTimer.getElapsedTimeSeconds() > 0.5) && kState == -1) {
+        if ((distance <= 2 || distance2 <= 1.5 || kTimer.getElapsedTimeSeconds() > 0.9) && kState == -1) {
             kickerSeriesStart();
         }
     }
