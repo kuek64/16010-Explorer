@@ -23,20 +23,25 @@ public class ShooterSubsystem {
     public static double fIntercept = 874.35;
     public static double blueGoalX = 12;
     public static double blueGoalY = 130;
-    public static double redGoalX  = 136;
+    public static double redGoalX  = 130;
     public static double redGoalY  = 130;
+    public static int power = 17;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
     private DcMotorEx turret = null;
     private RGBLight light = null;
-    public static double tSlope = 5.60729166667;
-    public static double fSlope = 4.568202325;
+    public static double tSlope = 5.56729166667;
+    public static double fSlope = 4.778202325;
     public static int pos = 0;
     public static int vel = 0;
-    public static double p = 1200;
+    public static double p = 2600;
     public static double i = 0;
-    public static double d = 300;
+    public static double d = 0;
     public static double f = 0;
+    public static double sp = 900;
+    public static double si = 0;
+    public static double sd = 50;
+    public static double sf = 0;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -57,13 +62,18 @@ public class ShooterSubsystem {
 
     public void setTurretPosition(int pos) {
         flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
-        turret.setPositionPIDFCoefficients(17);
+        turret.setPositionPIDFCoefficients(power);
         turret.setTargetPosition(pos);
         turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret.setPower(1);
     }
 
     public void setFlywheelVelocity(int vel) {
+        if(Math.abs(flywheel1.getVelocity() - vel) > 100) {
+            flywheel1.setVelocityPIDFCoefficients(p, i, d, f); }
+        else {
+            flywheel1.setVelocityPIDFCoefficients(sp, si, sd, sf);
+        }
         flywheel2.setPower(flywheel1.getPower());
         flywheel1.setVelocity(vel);
     }
@@ -114,6 +124,9 @@ public class ShooterSubsystem {
 
     public int getPos() {
         return turret.getCurrentPosition();
+    }
+    public double getVel() {
+        return flywheel1.getVelocity();
     }
     public void telemetry() {
     }

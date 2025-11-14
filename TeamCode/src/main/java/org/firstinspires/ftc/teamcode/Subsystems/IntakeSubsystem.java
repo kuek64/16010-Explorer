@@ -52,7 +52,7 @@ public class IntakeSubsystem {
             intake.setPower(-1);
             istate = IntakeState.REVERSE;
         } else if(istate == IntakeState.PARTIALINTAKE) {
-            intake.setPower(0.9);
+            intake.setPower(1);
         }
     }
 
@@ -99,7 +99,7 @@ public class IntakeSubsystem {
         double distance = dsensor.getDistance(DistanceUnit.INCH);
         double distance2 = dsensor2.getDistance(DistanceUnit.INCH);
 
-        if ((distance <= 2 || distance2 <= 1.5 || kTimer.getElapsedTimeSeconds() > 0.9) && kState == -1) {
+        if ((distance <= 1 || distance2 <= 1 || kTimer.getElapsedTimeSeconds() > 1.5) && kState == -1) {
             kickerSeriesStart();
         }
     }
@@ -126,19 +126,19 @@ public class IntakeSubsystem {
                 setKickState(1);
                 break;
             case 1:
-                if (kTimer.getElapsedTimeSeconds() > 0.075) {
+                if (kTimer.getElapsedTimeSeconds() > 0) {
                     kick();
                     setKickState(2);
                 }
                 break;
             case 2:
-                if (kTimer.getElapsedTimeSeconds() > 0.325) {
+                if (kTimer.getElapsedTimeSeconds() > 0.225) {
                     set();
                     setKickState(3);
                 }
                 break;
             case 3:
-                if (kTimer.getElapsedTimeSeconds() > 0.2) {
+                if (kTimer.getElapsedTimeSeconds() > 0.225) {
                     intake();
                     setKickState(-1);
                 }
@@ -149,8 +149,11 @@ public class IntakeSubsystem {
         }
     }
 
-    public double getDistance() {
+    public double getDistance1() {
         return dsensor.getDistance(DistanceUnit.INCH);
+    }
+    public double getDistance2() {
+        return dsensor2.getDistance(DistanceUnit.INCH);
     }
 
     public void kick() {

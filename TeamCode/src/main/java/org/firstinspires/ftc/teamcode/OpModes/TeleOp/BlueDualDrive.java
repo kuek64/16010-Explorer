@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.OpModes.BlueTwelveArtifact.autoEndPose;
+import static org.firstinspires.ftc.teamcode.OpModes.Auto.BlueTwelveArtifact.autoEndPose;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -68,7 +68,7 @@ public class BlueDualDrive extends OpMode {
         }
 
         if(gamepad2.a) {
-            intake.kickSequenceTeleOp();
+            intake.kickSequence();
         }
 
         if(gamepad1.back) {

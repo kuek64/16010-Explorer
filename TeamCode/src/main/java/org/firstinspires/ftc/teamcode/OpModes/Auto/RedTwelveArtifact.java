@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -29,10 +29,10 @@ public class RedTwelveArtifact extends OpMode {
     private final Pose bluescorePose = new Pose(60, 83.5, Math.toRadians(180));
     private final Pose bluepickup1Pose = new Pose(27, 83.5, Math.toRadians(180));
     private final Pose blueintake1Pose = new Pose(52, 83.5, Math.toRadians(180));
-    private final Pose bluepickup2Pose = new Pose(10, 60.5, Math.toRadians(180));
+    private final Pose bluepickup2Pose = new Pose(8, 59.5, Math.toRadians(180));
     private final Pose bluesetUpPose = new Pose(30, 77.5, Math.toRadians(90));
-    private final Pose blueemptyPose = new Pose(16, 77.5, Math.toRadians(90));
-    private final Pose blueintake2Pose = new Pose(60, 60.5, Math.toRadians(180));
+    private final Pose blueemptyPose = new Pose(16, 76, Math.toRadians(90));
+    private final Pose blueintake2Pose = new Pose(60, 59.5, Math.toRadians(180));
     private final Pose bluepickup3Pose = new Pose(10, 34.5, Math.toRadians(180));
     private final Pose blueintake3Pose = new Pose(60, 34.5, Math.toRadians(180));
     private final Pose blueleavePose = new Pose(50, 73.5, Math.toRadians(135));
@@ -107,16 +107,16 @@ public class RedTwelveArtifact extends OpMode {
         switch (pathState) {
             case 0:
                 intake.stop();
-                shooter.setFlywheelVelocity(1220);
+                shooter.setFlywheelVelocity(1240);
                 shooter.setTurretPosition(-245);
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
             case 1:
-                if(pathTimer.getElapsedTimeSeconds() > 1.7) {
+                if(pathTimer.getElapsedTimeSeconds() > 1.8) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 4.85) {
+                if(pathTimer.getElapsedTimeSeconds() > 4.55) {
                     intake.partialintake();
                     follower.setMaxPower(1);
                     follower.followPath(grabPickup1,true);
@@ -124,20 +124,16 @@ public class RedTwelveArtifact extends OpMode {
                 }
                 break;
             case 2:
-                if(pathTimer.getElapsedTimeSeconds() > 1.6) {
-                    intake.stop();
-                }
                 if(pathTimer.getElapsedTimeSeconds() > 3.3) {
                     follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
                 break;
             case 3:
-                if(pathTimer.getElapsedTimeSeconds() > 1.6) {
-                    intake.kick();
+                if(pathTimer.getElapsedTimeSeconds() > 1.7) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 3.9) {
+                if(pathTimer.getElapsedTimeSeconds() > 3.85) {
                     intake.partialintake();
                     follower.setMaxPower(1);
                     follower.followPath(grabPickup2,true);
@@ -146,17 +142,15 @@ public class RedTwelveArtifact extends OpMode {
                 break;
             case 4:
                 if(pathTimer.getElapsedTimeSeconds() > 2.55) {
-                    intake.stop();
                     follower.followPath(scorePickup2, true);
                     setPathState(5);
                 }
                 break;
             case 5:
-                if(pathTimer.getElapsedTimeSeconds() > 2.25) {
-                    intake.kick();
+                if(pathTimer.getElapsedTimeSeconds() > 2.3) {
                     intake.kickSequence();
                 }
-                if(pathTimer.getElapsedTimeSeconds() > 4.85) {
+                if(pathTimer.getElapsedTimeSeconds() > 4.55) {
                     intake.partialintake();
                     follower.setMaxPower(1);
                     follower.followPath(grabPickup3,true);
@@ -164,8 +158,7 @@ public class RedTwelveArtifact extends OpMode {
                 }
                 break;
             case 6:
-                if(pathTimer.getElapsedTimeSeconds() > 3.5) {
-                    intake.stop();
+                if(pathTimer.getElapsedTimeSeconds() > 3.6) {
                     follower.followPath(scorePickup3, true);
                     setPathState(7);
                 }
@@ -221,7 +214,7 @@ public class RedTwelveArtifact extends OpMode {
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
         telemetry.addData("Intake State: ", intake.istate);
-        telemetry.addData("Distance: ", intake.getDistance());
+        telemetry.addData("Distance: ", intake.getDistance1());
         telemetry.update();
     }
 

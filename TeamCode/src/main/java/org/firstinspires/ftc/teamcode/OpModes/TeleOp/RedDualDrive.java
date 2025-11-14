@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.OpModes.BlueTwelveArtifact.autoEndPose;
+import static org.firstinspires.ftc.teamcode.OpModes.Auto.RedTwelveArtifact.autoEndPose;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -16,15 +16,17 @@ import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.util.function.Supplier;
+
 @Configurable
-@TeleOp (name = "Blue Solo", group = "TeleOp")
-public class BlueSoloDrive extends OpMode {
+@TeleOp (name = "Red Dual", group = "TeleOp")
+public class RedDualDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
+
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
-    public static Pose parkPose = new Pose(110, 39.5, Math.toRadians(90));
-    private PathChain pathChain;
+    private Supplier<PathChain> pathChain;
 
     public void init() {
         shooter = new ShooterSubsystem(hardwareMap);
@@ -35,7 +37,7 @@ public class BlueSoloDrive extends OpMode {
         follower.setStartingPose(autoEndPose == null ? new Pose() : autoEndPose);
         follower.update();
 
-        pathChain = follower.pathBuilder() //Lazy Curve Generation
+        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98,0))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
@@ -53,33 +55,27 @@ public class BlueSoloDrive extends OpMode {
 
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
+        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), false, telemetry);
 
-        if(gamepad1.xWasPressed()) {
+        if(gamepad2.xWasPressed()) {
             intake.switchIntake();
         }
 
-        if(gamepad1.bWasPressed()) {
+        if(gamepad2.b) {
             intake.reverse();
         }
 
-        if(gamepad1.a) {
-            intake.kickSequenceTeleOp();
+        if(gamepad2.a) {
+            intake.kickSequence();
         }
 
         if(gamepad1.right_stick_button) {
             follower.setPose(resetPose);
         }
 
-        if(gamepad1.back) {
-            follower.holdPoint(parkPose);
-        }
-
         telemetry.addData("X: ", follower.getPose().getX());
         telemetry.addData("Y: ", follower.getPose().getY());
         telemetry.addData("Heading: ", follower.getPose().getHeading());
-        telemetry.addData("Turret Pos: ", shooter.getPos());
-        telemetry.addData("Intake Current: ", intake.getCurrent());
         telemetry.update();
     }
 

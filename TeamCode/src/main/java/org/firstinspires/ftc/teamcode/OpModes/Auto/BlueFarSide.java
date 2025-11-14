@@ -1,21 +1,20 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import static org.firstinspires.ftc.teamcode.OpModes.RedTwelveArtifact.autoEndPose;
+import static org.firstinspires.ftc.teamcode.OpModes.Auto.BlueTwelveArtifact.autoEndPose;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "Red Far", group = "Autonomous")
-public class RedFarSide extends OpMode {
+@Autonomous (name = "Blue Far", group = "Autonomous")
+public class BlueFarSide extends OpMode {
     public static Follower follower;
 
     public ShooterSubsystem shooter;
@@ -25,17 +24,11 @@ public class RedFarSide extends OpMode {
 
     private int pathState;
 
-    private final Pose bluestartPose = new Pose(62, 10, Math.toRadians(90));
-    private final Pose bluescorePose = new Pose(62, 10, Math.toRadians(90));
-    private final Pose bluepickup1Pose = new Pose(10.75, 13, Math.toRadians(225));
-    private final Pose blueintake1Pose = new Pose(10.75, 19, Math.toRadians(225));
-    private final Pose blueparkPose = new Pose(36, 14, Math.toRadians(90));
-
-    private final Pose startPose = bluestartPose.mirror();
-    private final Pose scorePose = bluescorePose.mirror();
-    private final Pose pickup1Pose = bluepickup1Pose.mirror();
-    private final Pose intake1Pose = blueintake1Pose.mirror();
-    private final Pose parkPose = blueparkPose.mirror();
+    private final Pose startPose = new Pose(62, 10, Math.toRadians(90));
+    private final Pose scorePose = new Pose(62, 10, Math.toRadians(90));
+    private final Pose pickup1Pose = new Pose(10.75, 13, Math.toRadians(225));
+    private final Pose intake1Pose = new Pose(10.75, 19, Math.toRadians(225));
+    private final Pose parkPose = new Pose(36, 14, Math.toRadians(90));
 
     private PathChain scorePickup1, grabPickup1 , leave;
 
@@ -64,7 +57,7 @@ public class RedFarSide extends OpMode {
             case 0:
                 intake.stop();
                 shooter.setFlywheelVelocity(1500);
-                shooter.setTurretPosition(125);
+                shooter.setTurretPosition(-125);
                 setPathState(1);
                 break;
             case 1:

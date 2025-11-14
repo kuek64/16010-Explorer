@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.OpModes.RedTwelveArtifact.autoEndPose;
+import static org.firstinspires.ftc.teamcode.OpModes.Auto.BlueTwelveArtifact.autoEndPose;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -17,13 +17,13 @@ import org.firstinspires.ftc.teamcode.Subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@TeleOp (name = "Red Solo", group = "TeleOp")
-public class RedSoloDrive extends OpMode {
+@TeleOp (name = "Blue Solo", group = "TeleOp")
+public class BlueSoloDrive extends OpMode {
     public ShooterSubsystem shooter;
     public IntakeSubsystem intake;
-
     public static Follower follower;
     public static Pose resetPose = new Pose(72,72,Math.toRadians(90));
+    public static Pose parkPose = new Pose(110, 39.5, Math.toRadians(90));
     private PathChain pathChain;
 
     public void init() {
@@ -53,7 +53,7 @@ public class RedSoloDrive extends OpMode {
 
         follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), false, telemetry);
+        shooter.alignTurret(follower.getPose().getX(), follower.getPose().getY(), follower.getPose().getHeading(), true, telemetry);
 
         if(gamepad1.xWasPressed()) {
             intake.switchIntake();
@@ -64,11 +64,15 @@ public class RedSoloDrive extends OpMode {
         }
 
         if(gamepad1.a) {
-            intake.kickSequenceTeleOp();
+            intake.kickSequence();
         }
 
         if(gamepad1.right_stick_button) {
             follower.setPose(resetPose);
+        }
+
+        if(gamepad1.back) {
+            follower.holdPoint(parkPose);
         }
 
         telemetry.addData("X: ", follower.getPose().getX());
