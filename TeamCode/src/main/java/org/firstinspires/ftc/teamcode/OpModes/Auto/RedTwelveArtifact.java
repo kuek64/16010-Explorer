@@ -107,7 +107,7 @@ public class RedTwelveArtifact extends OpMode {
         switch (pathState) {
             case 0:
                 intake.stop();
-                shooter.setFlywheelVelocity(1240);
+                shooter.setFlywheelVelocity(1250);
                 shooter.setTurretPosition(-245);
                 follower.followPath(scorePreload);
                 setPathState(1);

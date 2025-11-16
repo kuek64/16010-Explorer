@@ -20,10 +20,10 @@ import java.util.List;
 public class ShooterSubsystem {
     public static double turretOffsetY = -4.0;
     public static double turretOffsetX  = 0;
-    public static double fIntercept = 874.35;
+    public static double fIntercept = 884.35;
     public static double blueGoalX = 12;
     public static double blueGoalY = 130;
-    public static double redGoalX  = 130;
+    public static double redGoalX  = 138;
     public static double redGoalY  = 130;
     public static int power = 17;
     private DcMotorEx flywheel1 = null;
