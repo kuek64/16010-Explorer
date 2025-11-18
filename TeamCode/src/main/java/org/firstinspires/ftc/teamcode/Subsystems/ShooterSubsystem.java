@@ -31,17 +31,22 @@ public class ShooterSubsystem {
     private DcMotorEx turret = null;
     private RGBLight light = null;
     public static double tSlope = 5.56729166667;
-    public static double fSlope = 4.778202325;
+    public static double fSlope = 3.878202325;
     public static int pos = 0;
     public static int vel = 0;
-    public static double p = 2600;
+    public static double p = 800;
     public static double i = 0;
     public static double d = 0;
     public static double f = 0;
-    public static double sp = 900;
+    public static double sp = 400;
     public static double si = 0;
     public static double sd = 50;
     public static double sf = 0;
+    public static double cp = 400;
+    public static double ci = 0;
+    public static double cd = 50;
+    public static double cf = 0;
+    public static double counterFactor = 0.636;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -51,17 +56,18 @@ public class ShooterSubsystem {
 
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setDirection(DcMotor.Direction.REVERSE);
-        flywheel1.setDirection(DcMotor.Direction.REVERSE);
-        flywheel2.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheel1.setDirection(DcMotor.Direction.FORWARD);
+        flywheel2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
+        flywheel1.setVelocityPIDFCoefficients(cp, ci, cd, cf);
+        flywheel2.setVelocityPIDFCoefficients(p, i, d, f);
     }
 
     public void setTurretPosition(int pos) {
-        flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
         turret.setPositionPIDFCoefficients(power);
         turret.setTargetPosition(pos);
         turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -69,13 +75,14 @@ public class ShooterSubsystem {
     }
 
     public void setFlywheelVelocity(int vel) {
-        if(Math.abs(flywheel1.getVelocity() - vel) > 100) {
-            flywheel1.setVelocityPIDFCoefficients(p, i, d, f); }
+        if(Math.abs(flywheel2.getVelocity() - vel) > 100) {
+            flywheel2.setVelocityPIDFCoefficients(p, i, d, f); }
         else {
-            flywheel1.setVelocityPIDFCoefficients(sp, si, sd, sf);
+            flywheel2.setVelocityPIDFCoefficients(sp, si, sd, sf);
         }
-        flywheel2.setPower(flywheel1.getPower());
-        flywheel1.setVelocity(vel);
+        flywheel1.setVelocityPIDFCoefficients(cp,ci,cd,cf);
+        flywheel2.setVelocity(vel);
+        flywheel1.setVelocity(vel*counterFactor);
     }
 
     public void update() {
@@ -98,8 +105,8 @@ public class ShooterSubsystem {
 
             int targetTicks = (int) (tSlope * turretAngle);
 
-            final int TURRET_MIN = -600;
-            final int TURRET_MAX = 600;
+            final int TURRET_MIN = -1000;
+            final int TURRET_MAX = 1000;
 
             if (targetTicks > TURRET_MAX || targetTicks < TURRET_MIN) {
                 pos = 0;
@@ -126,8 +133,13 @@ public class ShooterSubsystem {
         return turret.getCurrentPosition();
     }
     public double getVel() {
-        return flywheel1.getVelocity();
+        return flywheel2.getVelocity();
     }
+
+    public double getVel2() {
+        return flywheel2.getVelocity();
+    }
+
     public void telemetry() {
     }
 }

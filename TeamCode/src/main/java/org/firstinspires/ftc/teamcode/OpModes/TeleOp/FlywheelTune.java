@@ -24,6 +24,7 @@ public class FlywheelTune extends OpMode {
         shooter.setFlywheelVelocity(vel);
 
         telemetry.addData("Velocity: ", shooter.getVel());
+        telemetry.addData("Velocity Counter: ", shooter.getVel2());
         telemetry.addData("Velocity Target: ", vel);
         telemetry.addData("Distance Sensor 1: ", intake.getDistance1());
         telemetry.addData("Distance Sensor 2: ", intake.getDistance2());
