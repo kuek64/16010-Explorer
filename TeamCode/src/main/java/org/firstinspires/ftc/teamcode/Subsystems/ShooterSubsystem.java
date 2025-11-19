@@ -20,11 +20,11 @@ import java.util.List;
 public class ShooterSubsystem {
     public static double turretOffsetY = -4.0;
     public static double turretOffsetX  = 0;
-    public static double fIntercept = 884.35;
-    public static double blueGoalX = 12;
-    public static double blueGoalY = 130;
-    public static double redGoalX  = 138;
-    public static double redGoalY  = 130;
+    public static double fIntercept = 570;
+    public static double blueGoalX = 0;
+    public static double blueGoalY = 144;
+    public static double redGoalX  = 144;
+    public static double redGoalY  = 144;
     public static int power = 17;
     private DcMotorEx flywheel1 = null;
     private DcMotorEx flywheel2 = null;
@@ -34,19 +34,19 @@ public class ShooterSubsystem {
     public static double fSlope = 3.878202325;
     public static int pos = 0;
     public static int vel = 0;
-    public static double p = 800;
+    public static double p = 200;
     public static double i = 0;
-    public static double d = 0;
-    public static double f = 0;
-    public static double sp = 400;
+    public static double d = 60;
+    public static double f = 20;
+    public static double sp = 300;
     public static double si = 0;
     public static double sd = 50;
     public static double sf = 0;
-    public static double cp = 400;
+    public static double cp = 200;
     public static double ci = 0;
-    public static double cd = 50;
+    public static double cd = 10;
     public static double cf = 0;
-    public static double counterFactor = 0.636;
+    public static double counterFactor = -1.1;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -75,11 +75,12 @@ public class ShooterSubsystem {
     }
 
     public void setFlywheelVelocity(int vel) {
-        if(Math.abs(flywheel2.getVelocity() - vel) > 100) {
+        /*if(Math.abs(flywheel2.getVelocity() - vel) > 100) {
             flywheel2.setVelocityPIDFCoefficients(p, i, d, f); }
         else {
             flywheel2.setVelocityPIDFCoefficients(sp, si, sd, sf);
-        }
+        }*/
+        flywheel2.setVelocityPIDFCoefficients(p,i,d,f);
         flywheel1.setVelocityPIDFCoefficients(cp,ci,cd,cf);
         flywheel2.setVelocity(vel);
         flywheel1.setVelocity(vel*counterFactor);
@@ -137,7 +138,7 @@ public class ShooterSubsystem {
     }
 
     public double getVel2() {
-        return flywheel2.getVelocity();
+        return flywheel1.getVelocity();
     }
 
     public void telemetry() {
